@@ -1,32 +1,31 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import { Logo } from "@/components/Logo";
 import { NavLink } from "@/components/NavLink";
-import { SearchBox } from "@/components/SearchBox";
+import { CommandPalette } from "@/components/CommandPalette";
+import { PaletteTrigger } from "@/components/PaletteTrigger";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-10 border-b border-line bg-bg/90 backdrop-blur">
+      <header className="sticky top-0 z-20 bg-bg/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
-          <Link href="/" aria-label="Igoudar Startseite">
+          <Link href="/" aria-label="Igoudar Übersicht">
             <Logo />
           </Link>
-          <div className="order-3 w-full sm:order-none sm:w-auto sm:flex-1">
-            <Suspense>
-              <SearchBox />
-            </Suspense>
-          </div>
-          <nav className="flex items-center gap-1">
+          <nav className="order-3 -mx-1 flex w-full items-center gap-1 overflow-x-auto sm:order-none sm:w-auto">
             <NavLink href="/">Übersicht</NavLink>
             <NavLink href="/documents">Dokumente</NavLink>
+            <NavLink href="/links">Links</NavLink>
+            <NavLink href="/settings">Einstellungen</NavLink>
           </nav>
-          <form action="/auth/signout" method="post" className="ml-auto sm:ml-0">
-            <button className="text-sm text-muted hover:text-ink">Abmelden</button>
-          </form>
+          <div className="ml-auto w-48 sm:w-64">
+            <PaletteTrigger />
+          </div>
         </div>
+        <div className="lozenge-band" aria-hidden />
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+      <CommandPalette />
     </div>
   );
 }

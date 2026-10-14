@@ -81,8 +81,8 @@ export function Uploader({ userId }: { userId: string }) {
         role="button"
         tabIndex={0}
         onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && input.current?.click()}
-        className={`cursor-pointer rounded-2xl border-2 border-dashed px-6 py-8 text-center transition-colors ${
-          over ? "border-accent bg-accent-soft" : "border-line bg-surface hover:border-accent"
+        className={`cursor-pointer rounded-3xl border-2 border-dashed px-6 py-8 text-center transition-colors ${
+          over ? "border-accent bg-accent-soft" : "border-line bg-surface/60 hover:border-glow"
         }`}
       >
         <p className="font-medium">PDFs hierher ziehen oder klicken</p>
@@ -98,7 +98,7 @@ export function Uploader({ userId }: { userId: string }) {
       </div>
 
       {items.length > 0 && (
-        <ul className="mt-3 divide-y divide-line rounded-xl border border-line bg-surface text-sm">
+        <ul className="mt-3 divide-y divide-line rounded-2xl border border-line bg-surface text-sm">
           {items.map((i) => (
             <li key={i.key} className="flex items-center gap-3 px-4 py-2.5">
               <span

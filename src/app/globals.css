@@ -1,68 +1,115 @@
 @import "tailwindcss";
 
-/* Farben angelehnt an Lehm, Sand und Zedernholz der Igoudar-Speicherburgen */
+/*
+  Igoudar – "Speicher bei Nacht"
+  Nachtindigo wie der Himmel über dem Anti-Atlas, Safran für Aktionen,
+  Majorelle-Blau als Leuchten. Das Rautenband zitiert die geschnitzten Speichertüren.
+*/
 :root {
-  --bg: #f7f3ec;
-  --surface: #fffdf9;
-  --ink: #2a211b;
-  --muted: #76685d;
-  --line: #e6ddd0;
-  --accent: #b5532a;
-  --accent-ink: #ffffff;
-  --accent-soft: #f4e2d6;
-  --good: #3f7d4e;
-  --warn: #b7791f;
-  --bad: #b23a3a;
-  --mark: #f6d99a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #17130f;
-    --surface: #211b16;
-    --ink: #f1e9df;
-    --muted: #a7978a;
-    --line: #3a3029;
-    --accent: #e07a4b;
-    --accent-ink: #1b120d;
-    --accent-soft: #3b2418;
-    --good: #7cc08c;
-    --warn: #e2b04f;
-    --bad: #e57373;
-    --mark: #6b4f1d;
-  }
+  color-scheme: dark;
+  --bg: #0e1130;
+  --surface: #161a3d;
+  --surface-2: #1d2250;
+  --ink: #eeeafb;
+  --muted: #9c98c6;
+  --line: #2b3170;
+  --accent: #f2b544;
+  --accent-ink: #1c1405;
+  --accent-soft: rgba(242, 181, 68, 0.14);
+  --glow: #6f7bff;
+  --glow-soft: rgba(111, 123, 255, 0.16);
+  --good: #5fd4a0;
+  --warn: #f2b544;
+  --bad: #ff7a86;
+  --mark: rgba(242, 181, 68, 0.32);
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
+  --color-glow: var(--glow);
+  --color-glow-soft: var(--glow-soft);
   --color-good: var(--good);
   --color-warn: var(--warn);
   --color-bad: var(--bad);
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-heading), ui-serif, Georgia, serif;
+  --font-display: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
 }
 
 html,
 body {
-  background: var(--bg);
+  background-color: var(--bg);
   color: var(--ink);
+}
+
+body {
+  /* Nachthimmel: ein Leuchten oben, wo das Suchfeld sitzt */
+  background-image:
+    radial-gradient(1200px 500px at 50% -180px, rgba(111, 123, 255, 0.22), transparent 70%),
+    radial-gradient(700px 300px at 85% 0px, rgba(242, 181, 68, 0.07), transparent 70%);
+  background-repeat: no-repeat;
 }
 
 mark {
   background: var(--mark);
   color: inherit;
-  border-radius: 2px;
-  padding: 0 1px;
+  border-radius: 3px;
+  padding: 0 2px;
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--glow);
   outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(111, 123, 255, 0.4);
+}
+
+/* Rautenband – das Motiv der Igoudar-Türen */
+.lozenge-band {
+  height: 10px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M10 1 L15 5 L10 9 L5 5 Z' fill='none' stroke='%23f2b544' stroke-opacity='.55' stroke-width='1'/%3E%3Cpath d='M0 5 H4 M16 5 H20' stroke='%236f7bff' stroke-opacity='.5' stroke-width='1'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+/* Das leuchtende Suchfeld – der eine laute Moment der App */
+.oracle {
+  position: relative;
+  border-radius: 28px;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(120deg, var(--accent), var(--glow) 45%, rgba(111, 123, 255, 0.2) 75%, var(--accent)) border-box;
+  border: 1.5px solid transparent;
+  box-shadow: 0 0 0 1px rgba(111, 123, 255, 0.08), 0 20px 80px -20px rgba(111, 123, 255, 0.45);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .oracle-pulse {
+    animation: oracle 3.6s ease-in-out 1;
+  }
+  @keyframes oracle {
+    0% { box-shadow: 0 0 0 1px rgba(111, 123, 255, 0.08), 0 20px 80px -20px rgba(111, 123, 255, 0); }
+    50% { box-shadow: 0 0 0 1px rgba(242, 181, 68, 0.25), 0 20px 90px -10px rgba(111, 123, 255, 0.6); }
+    100% { box-shadow: 0 0 0 1px rgba(111, 123, 255, 0.08), 0 20px 80px -20px rgba(111, 123, 255, 0.45); }
+  }
+  .spin-slow {
+    animation: spin 1.4s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+input,
+select,
+textarea {
+  color-scheme: dark;
 }

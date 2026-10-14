@@ -24,7 +24,7 @@ export default async function DocumentsPage({ searchParams }: { searchParams: Pr
 
   let query = supabase
     .from("documents")
-    .select("id, filename, vendor, doc_type, document_date, amount_cents, currency, status, created_at")
+    .select("id, filename, vendor, doc_type, document_date, amount_cents, currency, status, created_at, source")
     .order("document_date", { ascending: false, nullsFirst: true })
     .order("created_at", { ascending: false })
     .limit(200);
@@ -33,7 +33,7 @@ export default async function DocumentsPage({ searchParams }: { searchParams: Pr
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-semibold">Dokumente</h1>
+      <h1 className="font-display text-2xl font-medium sm:text-3xl">Dokumente</h1>
       <Uploader userId={user!.id} />
 
       <nav className="flex flex-wrap gap-2" aria-label="Nach Typ filtern">

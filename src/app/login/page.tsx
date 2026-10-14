@@ -41,15 +41,15 @@ export default function LoginPage() {
     <main className="flex min-h-dvh items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <Logo className="mb-8" />
-        <h1 className="font-display text-3xl font-semibold leading-tight">Deine Papiere. Ein sicherer Ort.</h1>
+        <h1 className="font-display text-3xl font-medium leading-tight">Deine Papiere. Ein sicherer Ort.</h1>
         <p className="mt-2 text-muted">
           Rechnungen, Verträge und gespeicherte Seiten – auf jedem Gerät da.
         </p>
 
-        <div className="mt-8 rounded-2xl border border-line bg-surface p-5 shadow-sm">
+        <div className="oracle oracle-pulse mt-8 p-6">
           <button
             onClick={withGoogle}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 font-medium hover:bg-bg"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-line bg-bg px-4 py-3 font-medium hover:border-glow"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
               <path fill="#4285F4" d="M22.6 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h6a5.1 5.1 0 0 1-2.2 3.3v2.8h3.6c2.1-1.9 3.2-4.8 3.2-8.1z" />
@@ -65,7 +65,7 @@ export default function LoginPage() {
           </div>
 
           {state === "sent" ? (
-            <p className="rounded-xl bg-accent-soft px-4 py-3 text-sm">
+            <p className="rounded-2xl bg-accent-soft px-4 py-3 text-sm">
               Link verschickt an <strong>{email}</strong>. Öffne die Mail auf diesem Gerät.
             </p>
           ) : (
@@ -76,11 +76,11 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="du@beispiel.de"
-                className="w-full rounded-xl border border-line bg-bg px-4 py-2.5 outline-none focus:border-accent"
+                className="w-full rounded-2xl border border-line bg-bg px-4 py-3 outline-none focus:border-glow"
               />
               <button
                 disabled={state === "sending"}
-                className="w-full rounded-xl bg-accent px-4 py-2.5 font-medium text-accent-ink disabled:opacity-60"
+                className="w-full rounded-2xl bg-accent px-4 py-3 font-semibold text-accent-ink disabled:opacity-60"
               >
                 {state === "sending" ? "Wird gesendet…" : "Anmeldelink senden"}
               </button>

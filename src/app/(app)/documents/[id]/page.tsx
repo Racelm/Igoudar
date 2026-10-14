@@ -23,7 +23,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
     <div className="space-y-6">
       <div>
         <Link href="/documents" className="text-sm text-muted hover:text-ink">← Dokumente</Link>
-        <h1 className="mt-2 font-display text-3xl font-semibold">{doc.vendor ?? doc.filename}</h1>
+        <h1 className="mt-2 font-display text-2xl font-medium sm:text-3xl">{doc.vendor ?? doc.filename}</h1>
         <p className="mt-1 text-sm text-muted">
           {doc.doc_type ? DOC_TYPE_LABEL[doc.doc_type] : "Typ unbekannt"} · {doc.filename} · {formatSize(doc.file_size)}
           {doc.page_count ? ` · ${doc.page_count} Seite${doc.page_count === 1 ? "" : "n"}` : ""}

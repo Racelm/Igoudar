@@ -44,7 +44,7 @@ export function aiEnabled() {
   return Boolean(process.env.OPENAI_API_KEY);
 }
 
-export async function analyzeDocument(text: string, filename: string): Promise<DocumentAnalysis> {
+export async function analyzeDocument(text: string, filename: string, emailSubject?: string | null): Promise<DocumentAnalysis> {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   // Die ersten ~12.000 Zeichen reichen für Kopf, Summen und Vertragsbedingungen.
@@ -55,7 +55,10 @@ export async function analyzeDocument(text: string, filename: string): Promise<D
     temperature: 0,
     messages: [
       { role: "system", content: SYSTEM },
-      { role: "user", content: `Dateiname: ${filename}\n\nText:\n${excerpt}` },
+      {
+        role: "user",
+        content: `Dateiname: ${filename}\n${emailSubject ? `Betreff der E-Mail: ${emailSubject}\n` : ""}\nText:\n${excerpt}`,
+      },
     ],
     response_format: {
       type: "json_schema",

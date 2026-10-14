@@ -7,7 +7,7 @@ import { aiEnabled, analyzeDocument, toRow } from "./analyze";
 export async function processDocument(supabase: SupabaseClient, documentId: string, opts: { force?: boolean } = {}) {
   const { data: doc, error } = await supabase
     .from("documents")
-    .select("id, storage_path, filename, extracted_text, user_edited")
+    .select("id, storage_path, filename, extracted_text, user_edited, email_subject")
     .eq("id", documentId)
     .single();
   if (error || !doc) throw new Error("Dokument nicht gefunden");
@@ -33,7 +33,7 @@ export async function processDocument(supabase: SupabaseClient, documentId: stri
 
     if (aiEnabled() && text.length > 0 && (!doc.user_edited || opts.force)) {
       await supabase.from("documents").update({ status: "analyzing" }).eq("id", doc.id);
-      const analysis = await analyzeDocument(text, doc.filename);
+      const analysis = await analyzeDocument(text, doc.filename, doc.email_subject);
       await supabase.from("documents").update({ ...toRow(analysis), user_edited: false }).eq("id", doc.id);
     }
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { parseQuery } from "@/lib/search-parse";
 import { DOC_TYPE_LABEL, formatDate } from "@/lib/format";
+import { Highlight } from "@/components/Highlight";
 
 export const metadata = { title: "Suche" };
 
@@ -23,28 +24,6 @@ const KIND_LABEL: Record<Hit["kind"], string> = {
 };
 
 const MONTH_NAMES = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-
-// ts_headline markiert Treffer mit <mark>. Alles andere wird als Text ausgegeben,
-// damit Inhalte aus PDFs nie als HTML im Browser landen.
-function Highlight({ text }: { text: string }) {
-  const parts = text.split(/(<mark>|<\/mark>)/);
-  let on = false;
-  return (
-    <>
-      {parts.map((p, i) => {
-        if (p === "<mark>") {
-          on = true;
-          return null;
-        }
-        if (p === "</mark>") {
-          on = false;
-          return null;
-        }
-        return on ? <mark key={i}>{p}</mark> : <span key={i}>{p}</span>;
-      })}
-    </>
-  );
-}
 
 function describeRange(from: string, to: string) {
   const [fy, fm] = from.split("-").map(Number);
@@ -88,7 +67,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-3xl font-semibold">Suche</h1>
+        <h1 className="font-display text-2xl font-medium sm:text-3xl">Suche</h1>
         <p className="mt-1 text-muted">
           {q ? (
             <>
@@ -112,17 +91,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       {failed && <p className="text-bad">Die Suche ist fehlgeschlagen. Ist die Datenbank-Migration eingespielt?</p>}
 
       {q && !failed && hits.length === 0 && (
-        <p className="rounded-xl border border-line bg-surface px-4 py-6 text-muted">
+        <p className="rounded-3xl border border-line bg-surface px-4 py-6 text-muted">
           Nichts gefunden. Versuch einen kürzeren Begriff, z. B. nur den Anbieter.
         </p>
       )}
 
       {groups.map((g) => (
         <section key={g.kind}>
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+          <h2 className="mb-2 text-sm text-muted">
             {KIND_LABEL[g.kind]} · {g.items.length}
           </h2>
-          <ul className="divide-y divide-line rounded-xl border border-line bg-surface">
+          <ul className="divide-y divide-line rounded-3xl border border-line bg-surface">
             {g.items.map((h) => {
               const external = h.kind === "link";
               const inner = (

@@ -75,9 +75,9 @@ export function DocumentForm({ doc, fileUrl }: { doc: Doc; fileUrl: string | nul
   const amount = doc.amount_cents !== null ? (doc.amount_cents / 100).toFixed(2).replace(".", ",") : "";
 
   return (
-    <form onSubmit={save} className="h-fit space-y-4 rounded-2xl border border-line bg-surface p-5">
+    <form onSubmit={save} className="h-fit space-y-4 rounded-3xl border border-line bg-surface p-5">
       <div className="flex items-baseline justify-between">
-        <h2 className="font-display text-lg font-semibold">Erkannte Angaben</h2>
+        <h2 className="font-display text-lg font-medium">Erkannte Angaben</h2>
         <span className="text-xs text-muted">
           {doc.user_edited
             ? "von dir korrigiert"

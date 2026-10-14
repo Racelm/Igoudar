@@ -11,16 +11,17 @@ export type DocRow = {
   currency: string | null;
   status: string;
   created_at: string;
+  source?: string;
 };
 
 export function DocumentTable({ rows }: { rows: DocRow[] }) {
   if (rows.length === 0) {
-    return <p className="rounded-xl border border-line bg-surface px-4 py-6 text-center text-muted">Noch keine Dokumente.</p>;
+    return <p className="rounded-3xl border border-line bg-surface px-4 py-6 text-center text-muted">Noch keine Dokumente.</p>;
   }
   return (
-    <div className="overflow-x-auto rounded-xl border border-line bg-surface">
+    <div className="overflow-x-auto rounded-3xl border border-line bg-surface">
       <table className="w-full text-left text-sm">
-        <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
+        <thead className="border-b border-line text-xs text-muted">
           <tr>
             <th className="px-4 py-2.5 font-medium">Datum</th>
             <th className="px-4 py-2.5 font-medium">Anbieter</th>
@@ -30,12 +31,17 @@ export function DocumentTable({ rows }: { rows: DocRow[] }) {
         </thead>
         <tbody className="divide-y divide-line">
           {rows.map((d) => (
-            <tr key={d.id} className="hover:bg-bg">
+            <tr key={d.id} className="hover:bg-surface-2">
               <td className="whitespace-nowrap px-4 py-2.5 text-muted">{formatDate(d.document_date ?? d.created_at)}</td>
               <td className="px-4 py-2.5">
                 <Link href={`/documents/${d.id}`} className="font-medium hover:text-accent">
                   {d.vendor ?? d.filename}
                 </Link>
+                {d.source === "email" && (
+                  <span className="ml-2 rounded-full bg-glow-soft px-1.5 py-0.5 text-[11px] text-glow" title="Aus Gmail importiert">
+                    Gmail
+                  </span>
+                )}
                 {d.status !== "done" && (
                   <span className={`ml-2 text-xs ${d.status === "failed" ? "text-bad" : "text-warn"}`}>
                     {STATUS_LABEL[d.status] ?? d.status}
