@@ -3,7 +3,7 @@
 Rechnungen, Verträge und gespeicherte Seiten an einem sicheren Ort.
 Benannt nach den *Igoudar*, den Speicherburgen der Amazigh, in denen jede Familie ihre Vorräte und Urkunden verwahrte.
 
-**Stack:** Next.js 15 (Vercel) · Supabase (PostgreSQL, Auth, Storage) · OpenAI GPT-4o-mini · unpdf
+**Stack:** Next.js 15 (Test: Vercel · dauerhaft: Hostinger Node.js Web App) · Supabase (PostgreSQL, Auth, Storage) · OpenAI GPT-4o-mini · unpdf
 
 ## Stand: Woche 1
 
@@ -26,25 +26,53 @@ Benannt nach den *Igoudar*, den Speicherburgen der Amazigh, in denen jede Famili
 2. **SQL Editor** → Inhalt von `supabase/migrations/20261008000000_init.sql` einfügen → *Run*.
    Das legt alle Tabellen, die Zugriffsregeln, den privaten Bucket `documents` und die Suchfunktion an.
 3. **Authentication → URL Configuration**
-   - *Site URL*: deine Vercel-Adresse, z. B. `https://igoudar.vercel.app`
-   - *Redirect URLs*: `https://igoudar.vercel.app/auth/callback` und `http://localhost:3000/auth/callback`
+   - *Site URL*: die Adresse deiner App (kommt in Schritt 2; vorerst `http://localhost:3000`)
+   - *Redirect URLs*: `<deine Adresse>/auth/callback` und `http://localhost:3000/auth/callback`
 4. **Project Settings → API**: *Project URL* und den *anon/publishable key* notieren.
 5. Optional **Authentication → Providers → Google** aktivieren (braucht einen OAuth-Client aus der Google Cloud Console).
    Ohne Google funktioniert die Anmeldung per E-Mail-Link sofort.
 
-### 2. Vercel
+### 2. App online stellen
 
-1. *Add New → Project* → Repository `racelm/Igoudar` importieren.
-2. Umgebungsvariablen eintragen:
+Für beide Wege brauchst du diese Umgebungsvariablen. Die `NEXT_PUBLIC_…`-Werte werden beim Build eingebaut, nach einer Änderung also neu deployen.
 
-   | Name | Wert |
+| Name | Wert |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL aus Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon/publishable key |
+| `OPENAI_API_KEY` | Schlüssel von platform.openai.com (optional) |
+| `OPENAI_MODEL` | `gpt-4o-mini` |
+
+### 2a. Zum Testen: Vercel (gratis)
+
+1. vercel.com → *Add New → Project* → Repository `racelm/Igoudar` importieren.
+2. Die vier Umgebungsvariablen aus der Tabelle oben eintragen.
+3. *Deploy*. Die Adresse (z. B. `https://igoudar-xyz.vercel.app`) in Supabase unter *Site URL* und *Redirect URLs* (`…/auth/callback`) eintragen.
+
+Der Umzug zu Hostinger später braucht keine Codeänderung, nur dieselben Variablen und die neue Adresse in Supabase.
+
+### 2b. Dauerhaft: Hostinger
+
+Voraussetzung: **Business Web Hosting** oder ein **Cloud-Tarif** (Single und Premium können keine Node.js-Apps).
+
+1. hPanel → **Websites → Website hinzufügen → Node.js web app**.
+2. **Import Git repository** → *Connect with GitHub* → Hostinger-App für `racelm/Igoudar` freigeben → Repository wählen.
+3. Hostinger erkennt Next.js. Einstellungen prüfen:
+
+   | Feld | Wert |
    | --- | --- |
-   | `NEXT_PUBLIC_SUPABASE_URL` | Project URL aus Supabase |
-   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon/publishable key |
-   | `OPENAI_API_KEY` | Schlüssel von platform.openai.com (optional) |
-   | `OPENAI_MODEL` | `gpt-4o-mini` |
+   | Framework | Next.js |
+   | Branch | `main` |
+   | Node.js-Version | **22** |
+   | Paketmanager | npm |
+   | Build-Befehl | `npm run build` |
+   | Output-Verzeichnis | `.next` |
 
-3. *Deploy*. Danach baut Vercel bei jedem Push auf `main` automatisch neu.
+4. Die vier Umgebungsvariablen aus der Tabelle oben eintragen.
+5. *Deploy*. Danach baut Hostinger bei jedem Push auf `main` automatisch neu.
+6. Domain verbinden (z. B. `app.deinedomain.de`) und dieselbe Adresse in Supabase unter *Site URL* und *Redirect URLs* eintragen.
+
+Hinweis: Hostinger stoppt die App nach einer Weile ohne Besucher. Der erste Aufruf danach dauert ein paar Sekunden.
 
 ### 3. Lokal (optional)
 
