@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { GmailConnectButton } from "./GmailConnectButton";
 
 export type AccountInfo = {
   id: string;
@@ -97,12 +98,10 @@ export function SyncPanel({
         <MailIcon />
         <div className="min-w-0 flex-1">
           <p className="font-medium">PDFs direkt aus Gmail holen</p>
-          <p className="text-sm text-muted">Rechnungen und Bestätigungen landen automatisch hier – nur Lesezugriff.</p>
+          <p className="text-sm text-muted">Ein Klick, Google fragt kurz nach – danach landen Rechnungen und Bestätigungen automatisch hier.</p>
         </div>
         {gmailReady ? (
-          <a href="/api/email/connect" className="rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-ink">
-            Gmail verbinden
-          </a>
+          <GmailConnectButton />
         ) : (
           <Link href="/settings" className="rounded-full border border-line px-4 py-2 text-sm">
             Einrichten

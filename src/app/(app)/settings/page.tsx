@@ -3,6 +3,7 @@ import { features } from "@/lib/env";
 import { SyncPanel, type AccountInfo } from "@/components/SyncPanel";
 import { DisconnectButton, RulesEditor } from "@/components/AccountActions";
 import { Bookmarklet } from "@/components/Bookmarklet";
+import { GmailConnectButton } from "@/components/GmailConnectButton";
 
 export const metadata = { title: "Einstellungen" };
 
@@ -41,7 +42,7 @@ export default async function SettingsPage({
       {gmail === "error" && <p className="rounded-2xl bg-bad/15 px-4 py-3 text-sm text-bad">Gmail-Verbindung fehlgeschlagen: {reason}</p>}
       {gmail === "not_configured" && (
         <p className="rounded-2xl bg-accent-soft px-4 py-3 text-sm">
-          Für Gmail fehlen noch Umgebungsvariablen: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET und TOKEN_ENCRYPTION_KEY. Anleitung im README.
+          Für Gmail fehlen noch Umgebungsvariablen: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET (dieselben wie in Supabase beim Google-Login) und TOKEN_ENCRYPTION_KEY.
         </p>
       )}
 
@@ -61,9 +62,7 @@ export default async function SettingsPage({
                       : a.last_error ?? (a.last_synced_at ? `Zuletzt abgerufen ${new Date(a.last_synced_at).toLocaleString("de-DE")}` : "Noch nicht abgerufen")}
                   </span>
                 </span>
-                {a.status === "reauth_required" && (
-                  <a href="/api/email/connect" className="text-sm text-accent">Neu verbinden</a>
-                )}
+                {a.status === "reauth_required" && <GmailConnectButton label="Neu verbinden" variant="link" />}
                 <DisconnectButton id={a.id} address={a.address} />
               </li>
             ))}
@@ -74,7 +73,7 @@ export default async function SettingsPage({
           <SyncPanel accounts={(accounts ?? []) as AccountInfo[]} pending={pending ?? 0} gmailReady={f.gmail} />
           {(accounts?.length ?? 0) > 0 && f.gmail && (
             <a href="/api/email/connect" className="inline-block text-sm text-glow hover:text-ink">
-              Weiteres Gmail-Konto verbinden
+              Weiteres Gmail-Konto mit anderer Adresse verbinden
             </a>
           )}
         </div>

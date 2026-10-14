@@ -3,19 +3,18 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Logo } from "@/components/Logo";
+import { signInWithGoogle } from "@/lib/google-login";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [withGmail, setWithGmail] = useState(true);
 
   const redirectTo = () => `${window.location.origin}/auth/callback`;
 
   async function withGoogle() {
-    const { error } = await createClient().auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: redirectTo() },
-    });
+    const { error } = await signInWithGoogle({ withGmail });
     if (error) {
       setState("error");
       setMessage(error.message);
@@ -59,6 +58,18 @@ export default function LoginPage() {
             </svg>
             Mit Google anmelden
           </button>
+          <label className="mt-3 flex cursor-pointer items-start gap-3 rounded-2xl px-1 text-sm">
+            <input
+              type="checkbox"
+              checked={withGmail}
+              onChange={(e) => setWithGmail(e.target.checked)}
+              className="mt-0.5 h-4 w-4 accent-[var(--accent)]"
+            />
+            <span>
+              <span className="block">PDF-Rechnungen aus Gmail automatisch holen</span>
+              <span className="block text-muted">Google fragt gleich mit. Igoudar liest nur, es verschickt und löscht nichts.</span>
+            </span>
+          </label>
 
           <div className="my-5 flex items-center gap-3 text-xs text-muted">
             <span className="h-px flex-1 bg-line" /> oder per E-Mail-Link <span className="h-px flex-1 bg-line" />

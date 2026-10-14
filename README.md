@@ -11,7 +11,7 @@ Benannt nach den *Igoudar*, den Speicherburgen der Amazigh, in denen jede Famili
 | --- | --- |
 | Login mit Google oder E-Mail-Link | fertig |
 | PDF-Upload (Drag and drop, mehrere Dateien, Duplikaterkennung) | fertig |
-| **Gmail verbinden:** PDFs aus Mails automatisch holen, mehrere Konten, Regeln (ignorieren / nur bestimmte Absender) | fertig |
+| **Gmail mit einem Klick:** beim Google-Login gleich mit verbunden, PDFs kommen automatisch; Regeln (ignorieren / nur bestimmte Absender) | fertig |
 | KI liest jedes PDF: Typ, Anbieter, Datum, Betrag, Vertragsnummer, Kündigungsfrist (nutzt auch den Mail-Betreff) | fertig |
 | **Websuche in der App** und Speichern mit einem Klick | fertig |
 | **Intelligentes Speichern:** Seite wird gelesen, KI vergibt Kategorie, Schlagwörter, Kurzbeschreibung, Vorschaubild | fertig |
@@ -33,23 +33,28 @@ Benannt nach den *Igoudar*, den Speicherburgen der Amazigh, in denen jede Famili
    - *Redirect URLs*: `https://igoudar-xyz.vercel.app/auth/callback` und `http://localhost:3000/auth/callback`
 4. **Project Settings → API**: *Project URL* und *anon/publishable key* notieren.
 
-### 2. Google Cloud (für Gmail – ca. 10 Minuten, einmalig)
+### 2. Google-Login mit Gmail (einmalig, ca. 10 Minuten)
+
+Für Nutzer ist es ein Klick: **Mit Google anmelden** → Google fragt, ob Igoudar Gmail lesen darf → die PDFs kommen automatisch.
+Dafür brauchst du einmalig einen Google-Zugang, den Supabase und die App gemeinsam nutzen.
 
 1. [console.cloud.google.com](https://console.cloud.google.com) → neues Projekt „Igoudar“.
 2. **APIs & Dienste → Bibliothek** → „Gmail API“ → *Aktivieren*.
-3. **APIs & Dienste → OAuth-Zustimmungsbildschirm** (Google Auth Platform):
+3. **Google Auth Platform / OAuth-Zustimmungsbildschirm:**
    - Nutzertyp **Extern**, App-Name „Igoudar“, deine E-Mail als Support-Adresse.
-   - **Datenzugriff / Bereiche:** `.../auth/gmail.readonly` hinzufügen.
-   - **Zielgruppe / Testnutzer:** deine Gmail-Adresse(n) eintragen. Der Status bleibt **Testen** – das reicht für dich.
-4. **Anmeldedaten → Anmeldedaten erstellen → OAuth-Client-ID** → Typ **Webanwendung**.
-   *Autorisierte Weiterleitungs-URIs:*
-   - `https://igoudar-xyz.vercel.app/api/email/callback` (deine App-Adresse)
-   - `http://localhost:3000/api/email/callback`
-   - optional für „Mit Google anmelden“: die Callback-URL aus Supabase → *Authentication → Providers → Google*
-5. *Client-ID* und *Clientschlüssel* kopieren.
+   - **Datenzugriff:** `openid`, `.../auth/userinfo.email` und `.../auth/gmail.readonly` hinzufügen.
+   - **Zielgruppe → Testnutzer:** deine Gmail-Adresse(n) eintragen. Status bleibt **Testen**.
+4. **Clients / Anmeldedaten → OAuth-Client-ID erstellen** → Typ **Webanwendung**.
+   *Autorisierte Weiterleitungs-URI:* die Callback-URL aus Supabase
+   (*Authentication → Sign In / Providers → Google*, sieht aus wie `https://xxxx.supabase.co/auth/v1/callback`).
+5. *Client-ID* und *Clientschlüssel* in **Supabase → Authentication → Providers → Google** eintragen und Google aktivieren.
+6. **Dieselben zwei Werte** auch als `GOOGLE_CLIENT_ID` und `GOOGLE_CLIENT_SECRET` in die App (Schritt 3) – damit erneuert Igoudar den Gmail-Zugang selbst.
 
-> Im Testmodus läuft der Gmail-Zugriff nach **7 Tagen** ab. Igoudar zeigt das an, ein Klick auf „Neu verbinden“ genügt.
-> Für einen öffentlichen Start verlangt Google eine Sicherheitsprüfung des Gmail-Zugriffs.
+> Im Testmodus läuft der Gmail-Zugang nach **7 Tagen** ab. Igoudar zeigt dann „Neu verbinden“ – ein Klick.
+> Vor dem Verkauf: App bei Google veröffentlichen und den Gmail-Zugriff prüfen lassen, dann entfällt der Ablauf.
+
+*Optional – mehrere Gmail-Adressen pro Nutzer:* zusätzlich `https://<deine-app>/api/email/callback` als Weiterleitungs-URI eintragen.
+Dann erscheint in den Einstellungen „Weiteres Gmail-Konto mit anderer Adresse verbinden“.
 
 ### 3. Umgebungsvariablen
 
@@ -60,8 +65,8 @@ Benannt nach den *Igoudar*, den Speicherburgen der Amazigh, in denen jede Famili
 | `OPENAI_API_KEY` | platform.openai.com → API keys | empfohlen |
 | `OPENAI_MODEL` | `gpt-4o-mini` | |
 | `TAVILY_API_KEY` | tavily.com, 1.000 Suchen/Monat gratis. Ohne: Websuche über OpenAI | optional |
-| `GOOGLE_CLIENT_ID` | aus Schritt 2 | für Gmail |
-| `GOOGLE_CLIENT_SECRET` | aus Schritt 2 | für Gmail |
+| `GOOGLE_CLIENT_ID` | aus Schritt 2 (dieselbe wie in Supabase) | für Gmail |
+| `GOOGLE_CLIENT_SECRET` | aus Schritt 2 (derselbe wie in Supabase) | für Gmail |
 | `TOKEN_ENCRYPTION_KEY` | Zufallszeichenkette, mind. 32 Zeichen – z. B. ein langes Passwort aus deinem Passwortmanager oder `openssl rand -base64 32`. Später nicht mehr ändern. | für Gmail |
 
 Unter **Einstellungen** in der App siehst du, welche Funktionen eingerichtet sind.
@@ -70,7 +75,7 @@ Unter **Einstellungen** in der App siehst du, welche Funktionen eingerichtet sin
 
 1. vercel.com → *Add New → Project* → `Racelm/Igoudar` importieren.
 2. Umgebungsvariablen aus der Tabelle eintragen → *Deploy*.
-3. Die Vercel-Adresse in Supabase (Schritt 1.3) und Google (Schritt 2.4) eintragen.
+3. Die Vercel-Adresse in Supabase eintragen (Schritt 1.3).
 4. Nach jeder Änderung an Variablen: *Deployments → Redeploy*.
 
 ### 4b. Dauerhaft: Hostinger
@@ -80,7 +85,7 @@ Voraussetzung: **Business Web Hosting** oder ein **Cloud-Tarif** (Single und Pre
 1. hPanel → **Websites → Website hinzufügen → Node.js web app** → **Import Git repository** → `Racelm/Igoudar`.
 2. Framework Next.js, Branch `main`, Node.js **22**, Build-Befehl `npm run build`, Output `.next`.
 3. Dieselben Umgebungsvariablen eintragen → *Deploy*.
-4. Domain verbinden und die neue Adresse in Supabase und Google eintragen.
+4. Domain verbinden und die neue Adresse in Supabase eintragen.
 
 ### 5. Lokal (optional)
 
@@ -94,7 +99,7 @@ npm test                     # Tests: Suchparser, Mail-Regeln, Seitenauswertung,
 ## Testablauf
 
 1. Anmelden.
-2. **Übersicht → Gmail verbinden** → bei Google das Häkchen für Gmail setzen. Die PDFs der letzten 12 Monate werden geholt und analysiert.
+2. **Mit Google anmelden** (Häkchen „PDF-Rechnungen aus Gmail automatisch holen“ bleibt an) → bei Google erlauben. Die PDFs der letzten 12 Monate werden geholt und analysiert.
 3. **Links** → z. B. „Riad Marrakesch Dachterrasse“ suchen → zwei Ergebnisse speichern. Kategorie und Schlagwörter erscheinen automatisch.
 4. **Einstellungen** → den Knopf „In Igoudar speichern“ in die Lesezeichenleiste ziehen, auf einer beliebigen Seite anklicken.
 5. **Strg K** → „Amazon Rechnung März“, „Vertrag“, „Urlaub“ – alles kommt aus einer Suche.
